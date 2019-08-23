@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Demo</title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <base href="/"/>
+</head>
+<body>
+<h1>Demo</h1>
+<div class="container">
+    <div class="container unauthenticated">
+        Login with Dipont: <a
+            href="http://localhost:50100/oauth/authorize?client_id=HpgSys&redirect_uri=http://localhost&response_type=code&scope=dipont&state=NRJEpF">click
+        here</a>
+    </div>
+    <div class="container authenticated">
+        Logged in as: <span id="user"></span>
+        <div>
+            <button onClick="logout()" class="btn btn-primary">Logout</button>
+        </div>
+        <div id="content"></div>
+    </div>
+
+</div>
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/axios.min.js"></script>
+<script type="text/javascript">
+    let clientAuth = window.btoa("HpgSys:123456");
+    let authServer = "http://localhost:50100";
+    let getUrlParam = function (name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        let r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    };
+    let token = localStorage.getItem("token");
+    if (token == null) {
+        ///获取token
+        let code = getUrlParam("code");
+        if (code != null) {
+            //code换取token
+            let tokenUrl = authServer + "/oauth/token?grant_type=authorization_code&code=" + code + "&redirect_uri=http%3A%2F%2Flocalhost";
+
+            axios.ajaxSetup({
+                headers: {
+                    Authorization: "Basic " + clientAuth,
+                    "Content-Type": "application/json",
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+
+
+
+            axios.post(tokenUrl, function (data) {
+                token = data.access_token;
+                localStorage.setItem("token", token)
+
+            });
+        } else {
+            //如果没有code则现世默认界面
+            $(".unauthenticated").show();
+            $(".authenticated").hide()
+        }
+
+    } else {
+        $.ajaxSetup({
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        });
+
+        //使用token
+        $.get("http://localhost:50200/user", function (data) {
+            $("#user").html(data.userAuthentication.details.name);
+            $.get("http://localhost:50200/time", function (data) {
+                $("#content").html("currentTime is :" + data);
+            });
+            $(".unauthenticated").hide();
+            $(".authenticated").show()
+        }).fail(function () {
+            $(".unauthenticated").show();
+            $(".authenticated").hide()
+        });
+    }
+
+
+    let logout = function () {
+        $.post("http://localhost:50100/logout", function () {
+            $("#user").html('');
+            $(".unauthenticated").show();
+            $(".authenticated").hide();
+        });
+        return true;
+    }
+
+</script>
+</body>
+</html>

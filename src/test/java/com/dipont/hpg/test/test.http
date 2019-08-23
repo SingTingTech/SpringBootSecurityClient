@@ -1,0 +1,18 @@
+POST http://localhost:50100/oauth/token?grant_type=authorization_code&code=WqLFUi&redirect_uri=http%3A%2F%2Flocalhost
+
+
+####
+POST http://localhost:50100/oauth/token?grant_type=authorization_code&code=Gx4upb&redirect_uri=http%3A%2F%2Flocalhost
+Authorization: Basic SHBnU3lzOjEyMzQ1Ng==
+
+###
+
+GET http://localhost:50200/user
+Authorization: Bearer 018e8163-fc0f-4864-a7be-9098af005ff2
+###
+POST http://localhost:50100/oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&code=G4r15K&redirect_uri=http://localhost&client_id=HpgSys&client_secret=123456
+
+###
