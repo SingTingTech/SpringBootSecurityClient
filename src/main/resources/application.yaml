@@ -1,8 +1,8 @@
-auth-server-url:  http://localhost:50100
+auth-server-url:  http://192.168.60.100:50100
 security:
   oauth2:
     client:
-      client-id: HpgSys
+      client-id: CrmSys
       client-secret: 123456
       access-token-uri: ${auth-server-url}/oauth/token
       user-authorization-uri: ${auth-server-url}/oauth/authorize
@@ -17,20 +17,5 @@ server:
       cookie:
         name: UISESSIONMEMBER
 jwt:
-  # 存放Token的Header Key
-  header: Authorization
   # 密匙key
   secret: 123456
-  # 过期时间   单位秒 7天后过期  604800
-  expiration: 3600
-  # 自定义token 前缀字符
-  tokenHead: "Bearer "
-  # 超时时间   单位秒
-  access_token: 3600
-  # 刷新token时间   单位秒
-  refresh_token: 64800
-  route:
-    authentication:
-      path: login/entry
-      refresh: oauth/refresh
-      register: login/account
